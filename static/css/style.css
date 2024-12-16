@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700&display=swap');
+
+body {
+    font-family: 'Noto Serif JP', serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    background-image: url('../img/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 90%;
+    width: 380px;
+    color: #333333;
+    backdrop-filter: blur(10px);
+}
+
+h1 {
+    color: #4a4a4a;
+    font-size: 28px;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+}
+
+.fortune {
+    margin-bottom: 30px;
+}
+
+.fortune-item {
+    margin-bottom: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.category {
+    color: #4a4a4a;
+    margin-right: 12px;
+}
+
+.score {
+    color: #ffd700;
+    font-size: 28px;
+    letter-spacing: 4px;
+}
+
+.encouraging-message {
+    font-weight: bold;
+    color: #4a4a4a;
+    font-size: 18px;
+    line-height: 1.5;
+    margin-top: 25px;
+    padding: 18px;
+    background-color: rgba(255, 215, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.message {
+    color: #666666;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.debug-mode {
+    font-size: 12px;
+    color: #888888;
+    margin-top: 18px;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .fortune-item {
+        font-size: 18px;
+    }
+
+    .score {
+        font-size: 24px;
+    }
+
+    .encouraging-message {
+        font-size: 16px;
+    }
+}
+
