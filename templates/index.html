@@ -10,20 +10,40 @@
     <div class="container">
         <h1>今日のあなたへ</h1>
         {% if already_drawn and not debug_mode %}
-            <p class="message">本日の運勢は既に引きました。<br>また明日お越しください。</p>
-        {% else %}
-            <div class="fortune">
-                {% for category, score in fortune.items() %}
-                    <div class="fortune-item">
-                        <span class="category">{{ category }}</span>
-                        <span class="score">
-                            {% for _ in range(score) %}★{% endfor %}
-                        </span>
+            <p class="message">本日の運勢は既に占いました。<br>また明日お越しください。</p>
+            {% if fortune %}
+                <div class="previous-fortune">
+                    <p class="sub-message">本日の運勢:</p>
+                    <div class="fortune">
+                        {% for category, score in fortune.items() %}
+                            <div class="fortune-item">
+                                <span class="category">{{ category }}</span>
+                                <span class="score">
+                                    {% for _ in range(score) %}★{% endfor %}
+                                </span>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-            {% if encouraging_message %}
-                <p class="encouraging-message">{{ encouraging_message }}</p>
+                    {% if encouraging_message %}
+                        <p class="encouraging-message">{{ encouraging_message }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            {% if fortune %}
+                <div class="fortune">
+                    {% for category, score in fortune.items() %}
+                        <div class="fortune-item">
+                            <span class="category">{{ category }}</span>
+                            <span class="score">
+                                {% for _ in range(score) %}★{% endfor %}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if encouraging_message %}
+                    <p class="encouraging-message">{{ encouraging_message }}</p>
+                {% endif %}
             {% endif %}
         {% endif %}
         {% if debug_mode %}

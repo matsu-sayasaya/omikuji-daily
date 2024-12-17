@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 import random
 import os
 import json
+import urllib.parse
 
 app = Flask(__name__)
 
 # デバッグモードの設定（環境変数で制御）
 DEBUG_MODE = os.environ.get('DEBUG_MODE', 'False').lower() == 'true'
-# DEBUG_MODE = True  # デバッグモードを強制的に有効化
 
 def generate_fortune():
     categories = ['仕事運', '恋愛運', '金運']
@@ -84,14 +84,44 @@ def index():
     
     if DEBUG_MODE or not last_fortune_date or datetime.strptime(last_fortune_date, '%Y-%m-%d').date() < today:
         fortune, encouraging_message = generate_fortune()
-        response = make_response(render_template('index.html', fortune=fortune, encouraging_message=encouraging_message, debug_mode=DEBUG_MODE))
-        response.set_cookie('last_fortune_date', str(today), max_age=86400)  # 24時間有効
-        response.set_cookie('last_fortune', json.dumps(fortune), max_age=86400)
-        response.set_cookie('last_message', encouraging_message, max_age=86400)
+        response = make_response(render_template('index.html', 
+            fortune=fortune, 
+            encouraging_message=encouraging_message, 
+            debug_mode=DEBUG_MODE,
+            already_drawn=False
+        ))
+        
+        # URLエ��コードしてクッキーに保存
+        response.set_cookie('last_fortune_date', str(today), max_age=86400)
+        response.set_cookie('last_fortune', urllib.parse.quote(json.dumps(fortune)), max_age=86400)
+        response.set_cookie('last_message', urllib.parse.quote(encouraging_message), max_age=86400)
         return response
     else:
-        last_fortune = json.loads(last_fortune) if last_fortune else {}
-        return render_template('index.html', already_drawn=True, fortune=last_fortune, encouraging_message=last_message, debug_mode=DEBUG_MODE)
+        try:
+            # URLデコードしてJSONをパース
+            last_fortune = json.loads(urllib.parse.unquote(last_fortune)) if last_fortune else {}
+            last_message = urllib.parse.unquote(last_message) if last_message else ""
+            
+            return render_template('index.html',
+                already_drawn=True,
+                fortune=last_fortune,
+                encouraging_message=last_message,
+                debug_mode=DEBUG_MODE
+            )
+        except Exception as e:
+            print(f"Error decoding cookies: {e}")
+            # エラーが発生した場合は新しい運勢を生成
+            fortune, encouraging_message = generate_fortune()
+            response = make_response(render_template('index.html',
+                fortune=fortune,
+                encouraging_message=encouraging_message,
+                debug_mode=DEBUG_MODE,
+                already_drawn=False
+            ))
+            response.set_cookie('last_fortune_date', str(today), max_age=86400)
+            response.set_cookie('last_fortune', urllib.parse.quote(json.dumps(fortune)), max_age=86400)
+            response.set_cookie('last_message', urllib.parse.quote(encouraging_message), max_age=86400)
+            return response
 
 if __name__ == '__main__':
     app.run(debug=True)
