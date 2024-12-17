@@ -37,23 +37,34 @@ h1 {
 
 .fortune {
     margin-bottom: 30px;
+    width: 280px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .fortune-item {
     margin-bottom: 18px;
     font-size: 20px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .category {
     color: #4a4a4a;
-    margin-right: 12px;
+    width: 80px;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .score {
     color: #ffd700;
     font-size: 28px;
     letter-spacing: 4px;
+    line-height: 1;
+    text-align: left;
+    width: 160px;
 }
 
 .encouraging-message {

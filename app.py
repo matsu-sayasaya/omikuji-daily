@@ -2,16 +2,23 @@ from flask import Flask, render_template, request, make_response
 from datetime import datetime, timedelta
 import random
 import os
+import json
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__)
 
 # デバッグモードの設定（環境変数で制御）
-DEBUG_MODE = True
+DEBUG_MODE = os.environ.get('DEBUG_MODE', 'False').lower() == 'true'
+# DEBUG_MODE = True  # デバッグモードを強制的に有効化
 
 def generate_fortune():
-    categories = ['全体運', '仕事運', '恋愛運', '金運']
+    categories = ['仕事運', '恋愛運', '金運']
     fortune = {category: random.randint(3, 5) for category in categories}
     
+    # 全体運の計算
+    average = sum(fortune.values()) / len(fortune)
+    overall_luck = round(average)
+    fortune['全体運'] = overall_luck
+
     encouraging_messages = [
         "今日という日が、あなたにとって最高の1日になりますように。",
         "あなたの笑顔は、周りの方を明るく照らしています。今日も笑顔でいてくださいね。",
@@ -71,15 +78,20 @@ def generate_fortune():
 @app.route('/')
 def index():
     last_fortune_date = request.cookies.get('last_fortune_date')
+    last_fortune = request.cookies.get('last_fortune')
+    last_message = request.cookies.get('last_message')
     today = datetime.now().date()
     
     if DEBUG_MODE or not last_fortune_date or datetime.strptime(last_fortune_date, '%Y-%m-%d').date() < today:
         fortune, encouraging_message = generate_fortune()
         response = make_response(render_template('index.html', fortune=fortune, encouraging_message=encouraging_message, debug_mode=DEBUG_MODE))
         response.set_cookie('last_fortune_date', str(today), max_age=86400)  # 24時間有効
+        response.set_cookie('last_fortune', json.dumps(fortune), max_age=86400)
+        response.set_cookie('last_message', encouraging_message, max_age=86400)
         return response
     else:
-        return render_template('index.html', already_drawn=True, debug_mode=DEBUG_MODE)
+        last_fortune = json.loads(last_fortune) if last_fortune else {}
+        return render_template('index.html', already_drawn=True, fortune=last_fortune, encouraging_message=last_message, debug_mode=DEBUG_MODE)
 
 if __name__ == '__main__':
     app.run(debug=True)
